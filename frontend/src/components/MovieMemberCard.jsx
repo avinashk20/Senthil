@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
-
 import "react-lazy-load-image-component/src/effects/opacity.css";
 import placeholderImg from "../assets/person_placeholder.jpg";
 
@@ -22,8 +21,15 @@ const MovieMemberCard = ({
         />
       </div>
       <figcaption className="mt-2">
-        <p>{name} </p>
-        <p className="text-neutral text-sm">{character}</p>
+        <p className="text-ellipsis overflow-hidden whitespace-nowrap">
+          {name}
+        </p>
+        <p
+          data-tool-tip={character}
+          className="tool-tip text-neutral text-sm overflow-hidden text-ellipsis whitespace-nowrap"
+        >
+          {character}
+        </p>
       </figcaption>
     </figure>
   );
@@ -37,3 +43,4 @@ MovieMemberCard.propTypes = {
 };
 
 export default MovieMemberCard;
+

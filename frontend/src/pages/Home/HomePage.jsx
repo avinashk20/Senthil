@@ -1,5 +1,6 @@
 import SearchBar from "../../components/SearchBar";
 
+
 const HomePage = () => {
   return (
     <main>

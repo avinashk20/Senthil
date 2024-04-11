@@ -3,7 +3,7 @@ import RouteLayout from "./pages/RouteLayout";
 
 import HomePage from "./pages/Home/HomePage";
 import SearchResultsPage from "./pages/SearchResults/SearchResultsPage";
-// import searchResultsLoader from "./pages/SearchResults/loader";
+import searchResultsLoader from "./pages/SearchResults/loader";
 import MoviePage from "./pages/Movie/MoviePage";
 import movieDataLoader from "./pages/Movie/loader";
 
@@ -20,7 +20,7 @@ const App = () => {
         {
           path: "search/:query",
           element: <SearchResultsPage />,
-          // loader: searchResultsLoader,
+          loader: searchResultsLoader,
         },
         { path: "movie/:id", element: <MoviePage />, loader: movieDataLoader },
       ],

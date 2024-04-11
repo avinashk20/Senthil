@@ -1,105 +1,94 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { trackWindowScroll } from "react-lazy-load-image-component";
 import MovieCard from "../../components/MovieCard";
+// import PulsingDots from "../../components/UI/PulsingDots";
+import LoadingDots from "../../components/UI/LoadingDots";
 
 import { useLoaderData, useParams } from "react-router-dom";
-import { useEffect } from "react";
+import useFetch from "../../hooks/use-fetch";
 
 const SearchResultsPage = trackWindowScroll(({ scrollPosition }) => {
-  const [moviesList, setMoviesList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(null);
-  const [currentPageNumber, setCurrentPageNumber] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  const cardContainerRef = useRef();
-
   const { query } = useParams();
 
-  useEffect(() => {
-    const requestConfig = {
-      url: `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&page=${currentPageNumber}`,
-      options: {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYTNhYTEzZmQ3MmFlNzVmY2E3NGM4NmUxZmU0NWZmZCIsInN1YiI6IjY0NmM0OGJmZDE4NTcyMDE2MTkzMjBjMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.W9f3iJv1799wwesTm3tMDtzSMYBLmYUB2wmqjBRamlI",
-        },
-      },
-    };
+  const resultsData = useLoaderData();
 
-    async function sendRequest(requestConfig) {
-      setIsLoading(true);
-      try {
-        const response = await fetch(requestConfig.url, requestConfig.options);
-        if (!response.ok) {
-          throw new Error("failed to fetch data");
-        }
-        const data = await response.json();
-        if (currentPageNumber === 1) {
-          setTotalPages(data.total_pages);
-        }
+  const [searchResults, setSearchResults] = useState(resultsData);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-        setMoviesList((currentMoviesList) => {
-          let updatedMoviesList = [...currentMoviesList];
-          return updatedMoviesList.concat(data.results);
-        });
-        
-      } catch (error) {
-        setHasError(error.message || "something went wrong!");
-      }
-      setIsLoading(false);
-    }
+  const { isLoading, sendRequest } = useFetch();
 
-    sendRequest(requestConfig);
+  const lastEleRef = useRef();
+  const observer = useRef();
 
-    const observer = new IntersectionObserver((entries, observer) => {
-      console.log(entries);
-      if (entries[0].isIntersecting && currentPageNumber < totalPages) {
-        setCurrentPageNumber((currentPageNumber) => currentPageNumber + 1);
-        observer.unobserve(entries[0].target);
-      }
+  const fetchMoreResults = useCallback(() => {
+    setCurrentPage((currentPage) => currentPage + 1);
+
+    const searchParams = new URLSearchParams({
+      query: query,
+      page: currentPage + 1,
     });
 
-    if (cardContainerRef.current && cardContainerRef.current.lastElementChild) {
-      console.log(totalPages, currentPageNumber);
-      console.log(cardContainerRef.current.lastElementChild);
-      observer.observe(cardContainerRef.current.lastElementChild);
-    }
+    const requestConfig = {
+      url: `http://localhost:8000/search?` + searchParams,
+      options: { method: "GET" },
+    };
+
+    sendRequest(requestConfig, (resultsData) => {
+      if (resultsData.length === 0) {
+        setHasMore(false);
+        return;
+      }
+      setSearchResults((currSearchResults) => [
+        ...currSearchResults,
+        ...resultsData,
+      ]);
+    });
+  }, [currentPage, query, sendRequest]);
+
+  useEffect(() => {
+    if (isLoading || !hasMore) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchMoreResults();
+        }
+      },
+      {
+        rootMargin: "200px",
+      }
+    );
+
+    if (lastEleRef.current) observer.current.observe(lastEleRef.current);
 
     return () => {
-      observer.disconnect();
+      if (observer.current) observer.current.disconnect();
     };
-  }, [currentPageNumber, query, totalPages]);
+  }, [hasMore, isLoading, currentPage, sendRequest, query, fetchMoreResults]);
 
-  const cards = moviesList.map((movie) => (
-    <MovieCard
-      key={movie.id}
-      id={movie.id}
-      posterUrl={movie.posterUrl}
-      title={movie.title}
-      releaseDate={movie.releaseDate}
-      scrollPosition={scrollPosition}
-    />
-  ));
-
-  let content;
-  if (isLoading) content = <p>loading...</p>;
-  else if (hasError) content = <h2>{hasError}</h2>;
-  else
-    content = (
+  const content =
+    searchResults.length === 0 ? (
+      <p>No results found!!</p>
+    ) : (
       <>
         <h2 className=" text-neutral text-3xl mb-8">
           Search results for
           <span> &quot;{query}&quot;</span>
         </h2>
-        <div
-          ref={cardContainerRef}
-          className="grid xl:grid-cols-5 lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4"
-        >
-          {cards}
+        <div className="grid xl:grid-cols-5 lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4">
+          {searchResults.map((movie) => (
+            <MovieCard
+              key={movie.id}
+              id={movie.id}
+              posterUrl={movie.posterUrl}
+              title={movie.title}
+              releaseDate={movie.releaseDate}
+              scrollPosition={scrollPosition}
+            />
+          ))}
         </div>
       </>
     );
@@ -107,7 +96,12 @@ const SearchResultsPage = trackWindowScroll(({ scrollPosition }) => {
   return (
     <main>
       <div className="content-container">
-        <div className="py-12">{content}</div>
+        {/* <LoadingDots /> */}
+        <div className="py-12">
+          {content}
+          <div ref={lastEleRef}></div>
+          {isLoading && <LoadingDots />}
+        </div>
       </div>
     </main>
   );

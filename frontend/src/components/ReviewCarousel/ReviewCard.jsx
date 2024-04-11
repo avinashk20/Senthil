@@ -42,14 +42,14 @@ const ReviewContent = ({ review }) => {
 
 const ReviewCard = ({ author, date, avatarUrl, review }) => {
   return (
-    <article className="p-8 bg-slate-900 lg:h-[500px] lg:overflow-y-scroll">
+    <article className="p-8 dark:bg-gray-900 bg-white border lg:h-[500px] lg:overflow-y-scroll no-scrollbar">
       <div className="flex gap-4 items-center mb-4">
         <img
           src={avatarUrl === null ? placeholderImg : avatarUrl}
-          className="w-16 aspect-square object-cover rounded-full"
+          className="w-16 aspect-square object-cover rounded-full ring-2"
           alt={`${author} profile picture`}
         />
-        <p className="text-xs sm:text-sm text-neutral">
+        <p className="text-xs sm:text-sm text-black dark:text-neutral">
           Written by {author} on {date}
         </p>
       </div>

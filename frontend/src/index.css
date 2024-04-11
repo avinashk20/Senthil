@@ -5,6 +5,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    /* color-scheme: light dark; */
+  }
+
   body {
     font-family: "Roboto", sans-serif;
     @apply bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark;
@@ -53,6 +57,47 @@
     );
   }
 
+  .tool-tip {
+    --tool-tip-clr: #333;
+    --arrow-size: 20px;
+    color: white;
+    position: relative;
+  }
+
+  .tool-tip::after,
+  .tool-tip::before {
+    position: absolute;
+    left: 50%;
+    /* transform: translateX(50%);
+    transform: scale(0); */
+    transition: transform 150ms;
+    z-index: 999;
+  }
+
+  .tool-tip::before {
+    top: calc(0.25rem + var(--arrow-size));
+    content: attr(data-tool-tip);
+    background-color: var(--tool-tip-clr);
+    padding: 0.5rem;
+    border-radius: 5px;
+    transform-origin: bottom center;
+    width: max-content;
+  }
+
+  .tool-tip::after {
+    content: "";
+    top: 0.25rem;
+    border: 20px solid transparent;
+    height: 20px;
+    width: 20px;
+    border-top: red;
+    transform-origin: top center;
+  }
+
+  .tool-tip:hover::after,
+  .tool-tip:hover::before {
+    transform: scale(1);
+  }
 }
 
 @layer utilities {

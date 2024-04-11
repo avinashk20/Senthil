@@ -15,7 +15,7 @@ const ReviewCarousel = ({ reviews }) => {
       <div className={styles.carousel}>
         {active > 0 && (
           <button
-            className={`${styles.nav} ${styles.left}`}
+            className={`${styles.nav} ${styles.left} text-gray-900 dark:text-white`}
             onClick={() => setActive((i) => i - 1)}
           >
             &lsaquo;
@@ -48,7 +48,7 @@ const ReviewCarousel = ({ reviews }) => {
 
         {active < count - 1 && (
           <button
-            className={`${styles.nav} ${styles.right}`}
+            className={`${styles.nav} ${styles.right} text-gray-900 dark:text-white`}
             onClick={() => setActive((i) => i + 1)}
           >
             &rsaquo;

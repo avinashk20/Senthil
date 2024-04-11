@@ -8,12 +8,6 @@ import ReviewsSection from "./ReviewsSection";
 
 import placeholderImg from "../../assets/poster_placeholder.png";
 
-/*
-
-ADD PAGINATION
-
-*/
-
 const MoviePage = () => {
   const {
     backdropUrl,
@@ -37,8 +31,11 @@ const MoviePage = () => {
     <main className="text-sm sm:text-base">
       <div className="relative py-8 sm:py-12 mb-8">
         <div
-          className="top-0 left-0 absolute h-full w-full -z-10 opacity-10"
-          style={{ backgroundImage: `url(${backdropUrl})`, backgroundSize: 'cover'}}
+          className="top-0 left-0 absolute h-full w-full -z-10 opacity-40 dark:opacity-10"
+          style={{
+            backgroundImage: `url(${backdropUrl})`,
+            backgroundSize: "cover",
+          }}
         ></div>
         <div className="bottom-0 left-0 absolute h-1/2 w-full dark:gradient-dark -z-10"></div>
 
@@ -57,7 +54,7 @@ const MoviePage = () => {
                 <h1 className="text-3xl sm:text-5xl capitalize mb-2">
                   {title}
                 </h1>
-                <p className="text-neutral text-base sm:text-lg italic">
+                <p className=" dark:text-neutral text-base sm:text-lg italic">
                   {tagline}
                 </p>
               </div>
@@ -78,19 +75,19 @@ const MoviePage = () => {
                   <span className="font-bold mr-2 whitespace-nowrap">
                     Release Date:
                   </span>
-                  <span className="text-neutral whitespace-nowrap">
+                  <span className=" dark:text-neutral whitespace-nowrap">
                     {releaseDate}
                   </span>
                 </p>
                 <p className="flex flex-wrap">
                   <span className="font-bold mr-2">Duration: </span>
-                  <span className="text-neutral whitespace-nowrap">
+                  <span className=" dark:text-neutral whitespace-nowrap">
                     {duration} min
                   </span>
                 </p>
                 <p className="flex flex-wrap">
                   <span className="font-bold mr-2">Rating: </span>
-                  <span className="text-neutral whitespace-nowrap">
+                  <span className=" dark:text-neutral whitespace-nowrap">
                     {rating}
                   </span>
                 </p>
@@ -98,13 +95,17 @@ const MoviePage = () => {
 
               <p className="mb-4">
                 <span className="font-bold mr-2">Director:</span>
-                <span className="text-neutral">{directors.join(", ")}</span>
+                <span className=" dark:text-neutral">
+                  {directors.join(", ")}
+                </span>
               </p>
 
               {writers.length > 0 && (
                 <p>
                   <span className="font-bold mr-2">Writer:</span>
-                  <span className="text-neutral">{writers.join(", ")}</span>
+                  <span className=" dark:text-neutral">
+                    {writers.join(", ")}
+                  </span>
                 </p>
               )}
             </div>

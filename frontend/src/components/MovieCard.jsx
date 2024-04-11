@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { memo } from "react";
 
 import "react-lazy-load-image-component/src/effects/opacity.css";
 import placeholderImg from "../assets/poster_placeholder.png";
@@ -9,7 +10,7 @@ const MovieCard = ({
   id,
   posterUrl,
   title,
-  releaseDate,
+  // releaseDate,
   scrollPosition,
   fixedWidth,
 }) => {
@@ -57,4 +58,4 @@ MovieCard.propTypes = {
   scrollPosition: PropTypes.object,
 };
 
-export default MovieCard;
+export default memo(MovieCard);
